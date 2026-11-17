@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PNHSCampusNav — Admin Dashboard</title>
+<link rel="icon" type="image/png" href="/favicon.png" />
+<link rel="stylesheet" href="/vendor/maplibre/maplibre-gl.css" />
+<link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+       <div class="brand-id">
+  <img class="brand-logo" src="/img/logo.png" alt="Palo National High School emblem" width="40" height="40" />
+  <div class="brand-name">PNHSCampusNav
+    <small>Admin dashboard</small>
+  </div>
+</div>
+        <span class="role-chip admin">Admin</span>
+      </div>
+
+      <nav class="tabs" role="tablist">
+        <button class="tab active" data-tab="live">Live</button>
+        <button class="tab" data-tab="classrooms">Classrooms</button>
+        <button class="tab" data-tab="users">Users</button>
+        <button class="tab" data-tab="history">History</button>
+      </nav>
+
+      <section id="tab-live" class="tab-panel">
+        <div>
+          <p class="panel-title">Find a classroom</p>
+          <div class="search-box">
+            <input id="searchInput" placeholder="Search room number or name…" autocomplete="off" />
+            <ul id="searchResults" class="result-list"></ul>
+          </div>
+        </div>
+        <div>
+          <p class="panel-title">Active tracked users (<span id="activeCount">0</span>)</p>
+          <ul id="activeList" class="active-list">
+            <li class="empty-note">No one is currently sharing their location.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="tab-classrooms" class="tab-panel" style="display:none;">
+        <div>
+          <p class="panel-title" id="roomFormTitle">Add a classroom</p>
+          <div id="formMsg" class="form-msg"></div>
+          <div class="field">
+            <label for="roomBuilding">Building</label>
+            <select id="roomBuilding"></select>
+          </div>
+          <div class="field-row">
+            <div class="field"><label for="roomNumber">Room no.</label><input id="roomNumber" /></div>
+            <div class="field"><label for="roomFloor">Floor</label><input id="roomFloor" placeholder="1st Floor" /></div>
+          </div>
+          <div class="field"><label for="roomName">Name (optional)</label><input id="roomName" placeholder="Computer Laboratory" /></div>
+          <div class="field-row">
+            <div class="field"><label for="roomLat">Latitude</label><input id="roomLat" /></div>
+            <div class="field"><label for="roomLng">Longitude</label><input id="roomLng" /></div>
+          </div>
+          <p class="hint">Tip: click the map to fill in latitude and longitude.</p>
+          <button id="saveRoom" class="btn-primary"><span class="btn-label">Save classroom</span></button>
+          <button id="cancelEdit" class="btn-ghost hidden-form" style="margin-top:8px;">Cancel edit</button>
+        </div>
+
+        <div>
+          <p class="panel-title">Add a building</p>
+          <div class="field-row">
+            <div class="field"><input id="buildingName" placeholder="Building name" /></div>
+            <button id="addBuilding" class="btn-small">Add</button>
+          </div>
+        </div>
+
+        <div>
+          <p class="panel-title">Campus boundary</p>
+          <p class="hint">Draw the school's outline once. Everything outside it is hidden and the map locks to the campus.</p>
+          <p id="boundaryStatus" class="hint"></p>
+          <div class="field-row">
+            <button id="drawBoundary" class="btn-small">Draw boundary</button>
+            <button id="clearBoundary" class="link-btn danger hidden-form" style="margin-bottom:16px;">Remove boundary</button>
+          </div>
+        </div>
+
+        <div>
+          <p class="panel-title">Walkways (route guide)</p>
+          <p class="hint">Trace the paths people really walk: roads, covered walks, shortcuts. Students then get a guide line along them, like a ride-hailing app. Where two walkways meet, click right on an existing point and the new one snaps onto it.</p>
+          <button id="drawWalkway" class="btn-small">Draw walkway</button>
+          <ul id="walkwayList" class="manage-list"></ul>
+        </div>
+
+        <div>
+          <p class="panel-title">3D building shapes</p>
+          <p class="hint">Each building needs a footprint (its outline) and a height before it shows as a 3D block. Draw it once per building.</p>
+          <ul id="buildingList" class="manage-list"></ul>
+        </div>
+
+        <div>
+          <p class="panel-title">All classrooms (<span id="roomCount">0</span>)</p>
+          <ul id="roomList" class="manage-list"></ul>
+        </div>
+      </section>
+
+      <section id="tab-users" class="tab-panel" style="display:none;">
+        <div>
+          <p class="panel-title">Create an account</p>
+          <div id="userMsg" class="form-msg"></div>
+          <div class="field"><label for="newFullName">Full name</label><input id="newFullName" /></div>
+          <div class="field-row">
+            <div class="field"><label for="newUsername">Username</label><input id="newUsername" /></div>
+            <div class="field"><label for="newPassword">Password</label><input id="newPassword" type="password" /></div>
+          </div>
+          <div class="field">
+            <label for="newRole">Role</label>
+            <select id="newRole"><option value="student">Student</option><option value="staff">Teacher / Staff</option><option value="admin">Admin</option></select>
+          </div>
+          <button id="createUser" class="btn-primary"><span class="btn-label">Create account</span></button>
+        </div>
+        <div>
+          <p class="panel-title">All users (<span id="userCount">0</span>)</p>
+          <ul id="userList" class="manage-list"></ul>
+        </div>
+      </section>
+
+      <section id="tab-history" class="tab-panel" style="display:none;">
+        <div>
+          <p class="panel-title">Location history</p>
+          <div class="field">
+            <label for="historyUser">Tracked user</label>
+            <select id="historyUser"></select>
+          </div>
+          <button id="showTrail" class="btn-primary"><span class="btn-label">Show recent trail on map</span></button>
+          <button id="clearTrail" class="btn-ghost" style="margin-top:8px;">Clear trail</button>
+          <p id="historySummary" class="hint" style="margin-top:12px;"></p>
+        </div>
+      </section>
+
+      <div class="sidebar-footer">
+        <span id="userLabel"></span>
+        <button id="logoutBtn" class="logout-link">Sign out</button>
+      </div>
+    </aside>
+
+    <div class="map-wrap">
+      <div id="map"></div>
+      <div class="map-controls">
+        <button id="tiltUp" title="Tilt up">▲</button>
+        <button id="tiltDown" title="Tilt down">▼</button>
+        <div class="map-controls-sep"></div>
+        <button id="rotateLeft" title="Rotate left">↺</button>
+        <button id="rotateRight" title="Rotate right">↻</button>
+        <div class="map-controls-sep"></div>
+        <button id="resetView" title="Reset view">⟲</button>
+      </div>
+      <div id="legend" class="map-legend">
+        <button id="legendToggle" class="legend-toggle" aria-expanded="true">Legend <span>&#9662;</span></button>
+        <ul class="legend-list">
+          <li><span class="lg-cell"><span class="lg lg-room"></span></span>Classroom</li>
+          <li><span class="lg-cell"><span class="lg lg-block"></span></span>Building (3D block)</li>
+          <li><span class="lg-cell"><span class="lg lg-self"></span></span>Student sharing live location</li>
+          <li><span class="lg-cell"><span class="lg lg-staff"></span></span>Teacher / staff sharing live location</li>
+          <li><span class="lg-cell"><span class="lg lg-boundary"></span></span>Campus boundary</li>
+          <li><span class="lg-cell"><span class="lg lg-walkway"></span></span>Walkway (route guide follows these)</li>
+          <li><span class="lg-cell"><span class="lg lg-vertex"></span></span>Corner point while drawing</li>
+          <li><span class="lg-cell"><span class="lg lg-pick"></span></span>Chosen spot for a classroom</li>
+        </ul>
+      </div>
+      <div id="drawToolbar" class="draw-toolbar hidden-form">
+        <span id="drawStatus">Click the map to place corners (0 points)</span>
+        <label id="drawHeightLabel" class="draw-height">Height (m)
+          <input id="drawHeight" type="number" min="2" max="60" value="9" />
+        </label>
+        <div class="draw-angle-controls" aria-label="Map angle controls">
+          <span class="draw-angle-label">Angle</span>
+          <button id="drawTiltDown" class="btn-ghost small" type="button" title="Lower map angle">▼</button>
+          <button id="drawTiltUp" class="btn-ghost small" type="button" title="Raise map angle">▲</button>
+          <button id="drawRotateLeft" class="btn-ghost small" type="button" title="Rotate map left">↺</button>
+          <button id="drawRotateRight" class="btn-ghost small" type="button" title="Rotate map right">↻</button>
+        </div>
+        <button id="drawUndo" class="btn-ghost small">Undo point</button>
+        <button id="drawFinish" class="btn-primary small" disabled>Finish &amp; save</button>
+        <button id="drawCancel" class="btn-ghost small">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="logoutDialog" class="logout-dialog hidden-form" role="dialog" aria-modal="true" aria-labelledby="logoutDialogTitle" aria-hidden="true">
+    <div class="logout-dialog-card">
+      <div class="logout-dialog-icon" aria-hidden="true">✓</div>
+      <h2 id="logoutDialogTitle">Sign out?</h2>
+      <p>Are you sure you want to sign out of PNHSCampusNav?</p>
+      <div class="logout-dialog-actions">
+        <button id="logoutCancel" class="btn-ghost" type="button">Cancel</button>
+        <button id="logoutConfirm" class="btn-primary" type="button">Sign out</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/logout-confirm.js"></script>
+  <script type="module" src="/js/admin.js"></script>
+</body>
+</html>

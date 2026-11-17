@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PNHSCampusNav — Campus Map</title>
+<link rel="icon" type="image/png" href="/favicon.png" />
+<link rel="stylesheet" href="/vendor/maplibre/maplibre-gl.css" />
+<link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar"> 
+      <div class="brand">
+       <div class="brand-id">
+  <img class="brand-logo" src="/img/logo.png" alt="Palo National High School emblem" width="40" height="40" />
+  <div class="brand-name">PNHSCampusNav
+    <small>Palo National High School</small>
+  </div>
+</div>
+        <span id="roleChip" class="role-chip">Guest</span>
+      </div>
+
+      <div>
+        <p class="panel-title">Find a classroom</p>
+        <div class="search-box">
+          <input id="searchInput" placeholder="Search room number or name…" autocomplete="off" />
+          <ul id="searchResults" class="result-list"></ul>
+        </div>
+      </div>
+
+      <div id="navPanel" class="hidden-form">
+        <p class="panel-title">Route guide</p>
+        <div class="nav-card">
+          <div id="navDest" class="nav-dest"></div>
+          <div id="navInfo" class="nav-sub">Waiting for your location…</div>
+          <div id="navNote" class="nav-note"></div>
+          <button id="startNavBtn" class="btn-primary hidden-form"><span class="btn-label">Share my location &amp; start</span></button>
+          <button id="arrivedBtn" class="btn-primary arrive"><span class="btn-label">I've arrived</span></button>
+          <button id="cancelNavBtn" class="link-btn" type="button">Cancel navigation</button>
+        </div>
+      </div>
+
+      <div id="trackSection">
+        <p id="trackTitle" class="panel-title">Live location</p>
+        <div class="track-card">
+          <div class="track-status">
+            <span id="trackDot" class="dot"></span>
+            <span id="trackStatusText">Not sharing your location</span>
+          </div>
+          <button id="toggleTrack" class="toggle-track"><span class="btn-label">Share my live location</span></button>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <span id="userLabel"></span>
+        <button id="logoutBtn" class="logout-link hidden-form">Sign out</button>
+        <a id="signInLink" href="/index.html" class="logout-link hidden-form">Sign in</a>
+      </div>
+    </aside>
+
+    <div class="map-wrap">
+      <div id="map"></div>
+      <div class="map-controls">
+        <button id="tiltUp" title="Tilt up">▲</button>
+        <button id="tiltDown" title="Tilt down">▼</button>
+        <div class="map-controls-sep"></div>
+        <button id="rotateLeft" title="Rotate left">↺</button>
+        <button id="rotateRight" title="Rotate right">↻</button>
+        <div class="map-controls-sep"></div>
+        <button id="resetView" title="Reset view">⟲</button>
+      </div>
+      <div id="legend" class="map-legend">
+        <button id="legendToggle" class="legend-toggle" aria-expanded="true">Legend <span>&#9662;</span></button>
+        <ul class="legend-list">
+          <li><span class="lg-cell"><span class="lg lg-room"></span></span>Classroom (tap it for details)</li>
+          <li><span class="lg-cell"><span class="lg lg-block"></span></span>Building (3D block)</li>
+          <li><span class="lg-cell"><span class="lg lg-self"></span></span>Your location</li>
+          <li><span class="lg-cell"><span class="lg lg-dest"></span></span>Your destination</li>
+          <li><span class="lg-cell"><span class="lg lg-route"></span></span>Route guide: follow this line</li>
+          <li><span class="lg-cell"><span class="lg lg-direct"></span></span>Straight guide: no walkway mapped here</li>
+          <li><span class="lg-cell"><span class="lg lg-boundary"></span></span>School grounds</li>
+        </ul>
+      </div>
+      <div id="toast" class="toast"></div>
+    </div>
+  </div>
+
+  <div id="logoutDialog" class="logout-dialog hidden-form" role="dialog" aria-modal="true" aria-labelledby="logoutDialogTitle" aria-hidden="true">
+    <div class="logout-dialog-card">
+      <div class="logout-dialog-icon" aria-hidden="true">✓</div>
+      <h2 id="logoutDialogTitle">Sign out?</h2>
+      <p>Are you sure you want to sign out of PNHSCampusNav?</p>
+      <div class="logout-dialog-actions">
+        <button id="logoutCancel" class="btn-ghost" type="button">Cancel</button>
+        <button id="logoutConfirm" class="btn-primary" type="button">Sign out</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/logout-confirm.js"></script>
+  <script type="module" src="/js/map.js"></script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PNHSCampusNav — Sign in</title>
+<link rel="icon" type="image/png" href="/favicon.png" />
+<link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="auth-shell">
+    <div class="auth-visual reveal">
+      <div class="visual-orbit orbit-one"></div>
+      <div class="visual-orbit orbit-two"></div>
+      <div class="visual-grid"></div>
+      <div class="visual-content">
+        <div class="visual-kicker"><span class="live-dot"></span> Campus navigation, reimagined</div>
+        <h2>Find your way<br /><em>with confidence.</em></h2>
+        <p>One calm, connected place for every classroom, route, and live campus moment.</p>
+        <div class="visual-stats">
+          <div><strong>3D</strong><span>Campus view</span></div>
+          <div><strong>Live</strong><span>GPS tracking</span></div>
+          <div><strong>Easy</strong><span>Wayfinding</span></div>
+        </div>
+      </div>
+      <div class="visual-compass" aria-hidden="true">+</div>
+    </div>
+    <div class="auth-card reveal">
+      <div class="auth-card-head">
+        <div class="auth-brand">
+          <img class="auth-logo" src="/img/logo.png" alt="" width="44" height="44" />
+          <div><span class="auth-eyebrow">Palo National High School</span><h1>PNHSCampusNav</h1></div>
+        </div>
+        <span class="secure-pill"><span></span> Secure access</span>
+      </div>
+      <p class="auth-sub">Your campus, clearly mapped. Sign in to pick up where you left off.</p>
+
+      <div id="authError" class="auth-error"></div>
+
+      <form id="loginForm">
+        <div class="form-heading"><strong>Welcome back</strong><span>Sign in to continue</span></div>
+        <div class="field">
+          <label for="loginUsername">Username</label>
+          <input id="loginUsername" name="username" autocomplete="username" required />
+        </div>
+        <div class="field">
+          <label for="loginPassword">Password</label>
+          <input id="loginPassword" name="password" type="password" autocomplete="current-password" required />
+        </div>
+        <button type="submit" class="btn-primary"><span class="btn-label">Sign in</span></button>
+      </form>
+
+      <form id="registerForm" class="hidden-form">
+        <div class="field">
+          <label for="regRole">Account type</label>
+          <select id="regRole" name="role">
+            <option value="student">Student</option>
+            <option value="staff">Staff</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="regName">Full name</label>
+          <input id="regName" name="full_name" required />
+        </div>
+        <div class="field">
+          <label for="regUsername">Username</label>
+          <input id="regUsername" name="username" required />
+        </div>
+        <div class="field">
+          <label for="regPassword">Password</label>
+          <input id="regPassword" name="password" type="password" required />
+        </div>
+        <div class="field">
+  <label for="regIdNumber" id="regIdLabel">LRN (12 digits)</label>
+  <div class="lg-input"><svg class="ic"><use href="#i-user"/></svg>
+    <input id="regIdNumber" name="id_number" autocomplete="off" inputmode="numeric" maxlength="12" placeholder="e.g. 123456789012" required /></div>
+  <p style="margin:6px 2px 0;font-size:.78rem;color:#5c6459">Used to confirm you belong to Palo National High School.</p>
+</div>
+        <button type="submit" class="btn-primary"><span class="btn-label">Create account</span></button>
+      </form>
+
+      <p class="auth-toggle">
+        <span id="toLoginLabel" class="hidden-form">Already have an account? <button id="toLogin" type="button">Sign in</button></span>
+        <span id="toRegisterLabel">New here? <button id="toRegister" type="button">Create a student/staff account</button></span>
+      </p>
+
+      <div class="guest-row">
+        <button id="guestBtn" class="btn-ghost">Continue as guest (view map only)</button>
+      </div>
+
+     
+    </div>
+  </div>
+
+  <script src="/js/auth.js"></script>
+</body>
+</html>
