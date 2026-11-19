@@ -27,19 +27,39 @@ app.use("/api/locations", locationRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/campus", campusRoutes);
 
-app.get("/api/health", (req, res) => res.json({ ok: true, name: "PNHSCampusNav" }));
+let databaseReady = false;
+
+app.get("/api/health", (req, res) => {
+  if (!databaseReady) {
+    return res.status(503).json({ ok: false, name: "PNHSCampusNav", database: "initializing" });
+  }
+  res.json({ ok: true, name: "PNHSCampusNav", database: "ready" });
+});
 
 registerSocketHandlers(io);
 
-initDatabase()
-  .then(() => {
-    server.listen(PORT, () => {
-      console.log(`PNHSCampusNav server running at http://localhost:${PORT}`);
-    });
-  })
-  .catch((err) => {
-    console.error("Failed to initialize the database. Is MySQL/MariaDB running and are");
-    console.error("the DB_HOST/DB_USER/DB_PASSWORD/DB_NAME values in .env correct?");
-    console.error(err);
-    process.exit(1);
-  });
+async function initializeDatabaseWithRetry() {
+  const maxAttempts = 12;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      await initDatabase();
+      databaseReady = true;
+      console.log("Database initialized.");
+      return;
+    } catch (err) {
+      console.error(`Database initialization attempt ${attempt}/${maxAttempts} failed:`, err.message);
+      if (attempt === maxAttempts) throw err;
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+    }
+  }
+}
+
+server.listen(PORT, () => {
+  console.log(`PNHSCampusNav server listening on port ${PORT}`);
+});
+
+initializeDatabaseWithRetry().catch((err) => {
+  console.error("Failed to initialize the database after 12 attempts.");
+  console.error("Verify the DB_* or Railway MYSQL* variables and MySQL networking.");
+  console.error(err);
+});

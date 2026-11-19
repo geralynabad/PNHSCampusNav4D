@@ -1,0 +1,9 @@
+[build]
+builder = "NIXPACKS"
+buildCommand = "npm ci --prefix pnhscampusnav"
+
+[deploy]
+startCommand = "npm --prefix pnhscampusnav start"
+healthcheckPath = "/api/health"
+healthcheckTimeout = 300
+restartPolicyType = "ON_FAILURE"

@@ -77,6 +77,24 @@ PNHSCampusNav server running at http://localhost:3000
 The seed step only runs once, the first time the `users` table is empty.
 Open **http://localhost:3000** in a browser.
 
+## 4b. Deploy on Railway
+
+1. Create a Railway project and deploy this repository from GitHub.
+2. Set the service root directory to `pnhscampusnav`.
+3. Add a Railway MySQL service to the project and make sure the application
+   service can reference its variables.
+4. In the application service, set `NODE_ENV=production` and a long random
+   `JWT_SECRET`. Railway's MySQL variables (`MYSQLHOST`, `MYSQLPORT`,
+   `MYSQLUSER`, `MYSQLPASSWORD`, and `MYSQLDATABASE`) are supported
+   automatically; the app also supports explicit `DB_*` references for services
+   that need them.
+5. Generate a Railway domain from the service's **Networking** settings.
+   The health check endpoint is `GET /api/health`.
+
+The database schema and demo data are initialized automatically on the first
+successful application start. Replace the demo passwords and campus data
+before sharing the deployment publicly.
+
 ## 5. Demo accounts
 
 | Username | Password | Role |
