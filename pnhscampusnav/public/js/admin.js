@@ -64,6 +64,10 @@ const map = new maplibregl.Map({
   attributionControl: { compact: true },
 });
 
+window.addEventListener("resize", () => {
+  map.resize();
+});
+
 document.getElementById("tiltUp").addEventListener("click", () => map.easeTo({ pitch: Math.min(map.getPitch() + 12, 75), duration: 300 }));
 document.getElementById("tiltDown").addEventListener("click", () => map.easeTo({ pitch: Math.max(map.getPitch() - 12, 0), duration: 300 }));
 document.getElementById("rotateLeft").addEventListener("click", () => map.easeTo({ bearing: map.getBearing() - 30, duration: 300 }));
