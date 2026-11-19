@@ -78,7 +78,7 @@ export function applyBoundary(map, boundary) {
   });
   map.addLayer({ id: LINE_LAYER, type: "line", source: LINE_SRC, paint: { "line-color": "#2b6138", "line-width": 3 } }, before);
 
-  const locked = boundsOf(boundary, 25);
+  const locked = boundsOf(boundary, 100);
   map.setMaxBounds(locked);
   return boundsOf(boundary, 0);
 }
