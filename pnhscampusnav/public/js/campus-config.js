@@ -11,6 +11,6 @@
 // The values below are PLACEHOLDERS (Palo town center).
 // ---------------------------------------------------------------
 export const CAMPUS_CENTER = { lat: 11.1583, lng: 124.9917 };
-export const HALF_EXTENT_M = 1000;
+export const HALF_EXTENT_M = 2000;
 export const DEFAULT_VIEW = { pitch: 55, bearing: -20, zoom: 18 };
 export const MAP_STYLE_URL = "https://tiles.openfreemap.org/styles/liberty";
