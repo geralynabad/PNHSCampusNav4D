@@ -254,11 +254,11 @@ input, select { font-family: inherit; font-size: 0.95rem; }
   transition: padding .24s var(--ease-out), overflow .24s var(--ease-out);
 }
 .sidebar-toggle {
-  position: absolute; z-index: 12; top: 18px; right: -16px;
-  width: 32px; height: 32px; border: 1.5px solid var(--line); border-radius: 50%;
+  position: absolute; z-index: 1000; top: 50%; right: -22px;
+  width: 44px; height: 44px; border: 2px solid var(--line); border-radius: 50%;
   background: var(--paper-raised); color: var(--forest-700);
   box-shadow: var(--shadow-card); display: grid; place-items: center;
-  font-size: 1.35rem; line-height: 1; padding: 0 0 3px;
+  font-size: 1.7rem; line-height: 1; padding: 0 0 4px;
   transition: right .24s var(--ease-out), transform .24s var(--ease-out), background .15s var(--ease);
 }
 .sidebar-toggle:hover { background: var(--forest-50); }
