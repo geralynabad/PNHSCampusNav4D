@@ -1,6 +1,6 @@
 // Shared helper: draws the campus boundary and keeps navigation within
 // the Eastern Visayas regional extent.
-import { EASTERN_VISAYAS_BOUNDS } from "/js/campus-config.js";
+import { CAMPUS_CENTER, HALF_EXTENT_M } from "/js/campus-config.js";
 
 const MASK_SRC = "campus-mask";
 const MASK_LAYER = "campus-mask-fill";
@@ -9,8 +9,13 @@ const LINE_LAYER = "campus-boundary-line";
 
 // Fallback box used until a boundary is drawn (set in campus-config.js).
 export function configBounds(scale = 1) {
-  void scale;
-  return EASTERN_VISAYAS_BOUNDS;
+  const m = HALF_EXTENT_M * scale;
+  const dLat = m / 111320;
+  const dLng = m / (111320 * Math.cos((CAMPUS_CENTER.lat * Math.PI) / 180));
+  return [
+    [CAMPUS_CENTER.lng - dLng, CAMPUS_CENTER.lat - dLat],
+    [CAMPUS_CENTER.lng + dLng, CAMPUS_CENTER.lat + dLat],
+  ];
 }
 
 export function boundsOf(boundary, padM = 0) {
@@ -73,6 +78,6 @@ export function applyBoundary(map, boundary) {
   });
   map.addLayer({ id: LINE_LAYER, type: "line", source: LINE_SRC, paint: { "line-color": "#2b6138", "line-width": 3 } }, before);
 
-  map.setMaxBounds(EASTERN_VISAYAS_BOUNDS);
+  map.setMaxBounds(boundsOf(boundary, HALF_EXTENT_M));
   return boundsOf(boundary, 0);
 }

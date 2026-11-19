@@ -1,5 +1,5 @@
 import * as maplibregl from "/vendor/maplibre/maplibre-gl.mjs";
-import { CAMPUS_CENTER, DEFAULT_VIEW, EASTERN_VISAYAS_BOUNDS, MAP_STYLE_URL } from "/js/campus-config.js";
+import { CAMPUS_CENTER, DEFAULT_VIEW, MAP_STYLE_URL } from "/js/campus-config.js";
 import { configBounds, applyBoundary, setMaskVisible } from "/js/campus-boundary.js";
 import { initLegend } from "/js/legend.js";
 
@@ -49,7 +49,7 @@ function flash(el, message, ok) {
   setTimeout(() => el.classList.remove("show"), 4000);
 }
 
-// ---------- Eastern Visayas map setup ----------
+// ---------- 10 km campus jurisdiction map setup ----------
 
 const map = new maplibregl.Map({
   container: "map",
@@ -76,7 +76,7 @@ let homeBounds = null;
 let currentBoundary = null;
 function goHome(duration) {
   if (homeBounds) map.fitBounds(homeBounds, { padding: 60, pitch: DEFAULT_VIEW.pitch, bearing: DEFAULT_VIEW.bearing, duration });
-  else map.fitBounds(EASTERN_VISAYAS_BOUNDS, { padding: 30, pitch: DEFAULT_VIEW.pitch, bearing: DEFAULT_VIEW.bearing, duration });
+  else map.easeTo({ center: [CAMPUS_CENTER.lng, CAMPUS_CENTER.lat], ...DEFAULT_VIEW, duration });
 }
 document.getElementById("resetView").addEventListener("click", () => goHome(500));
 

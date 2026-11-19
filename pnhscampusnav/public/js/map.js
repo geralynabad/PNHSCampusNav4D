@@ -1,5 +1,5 @@
 import * as maplibregl from "/vendor/maplibre/maplibre-gl.mjs";
-import { CAMPUS_CENTER, DEFAULT_VIEW, EASTERN_VISAYAS_BOUNDS, MAP_STYLE_URL } from "/js/campus-config.js";
+import { CAMPUS_CENTER, DEFAULT_VIEW, MAP_STYLE_URL } from "/js/campus-config.js";
 import { configBounds, applyBoundary } from "/js/campus-boundary.js";
 import { planRoute, distanceM, walkMinutes } from "/js/routing.js";
 import { initLegend } from "/js/legend.js";
@@ -60,7 +60,7 @@ document.getElementById("rotateRight").addEventListener("click", () => map.easeT
 let homeBounds = null; // set once the school boundary has loaded
 function goHome(duration) {
   if (homeBounds) map.fitBounds(homeBounds, { padding: 60, pitch: DEFAULT_VIEW.pitch, bearing: DEFAULT_VIEW.bearing, duration });
-  else map.fitBounds(EASTERN_VISAYAS_BOUNDS, { padding: 30, pitch: DEFAULT_VIEW.pitch, bearing: DEFAULT_VIEW.bearing, duration });
+  else map.easeTo({ center: [CAMPUS_CENTER.lng, CAMPUS_CENTER.lat], ...DEFAULT_VIEW, duration });
 }
 document.getElementById("resetView").addEventListener("click", () => goHome(500));
 
