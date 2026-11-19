@@ -110,6 +110,7 @@ function setSidebarCollapsed(collapsed) {
   sidebarToggle.setAttribute("aria-label", collapsed ? "Expand admin panel" : "Collapse admin panel");
   sidebarToggle.title = collapsed ? "Expand admin panel" : "Collapse admin panel";
   localStorage.setItem("pnhs_admin_sidebar", collapsed ? "collapsed" : "expanded");
+  window.requestAnimationFrame(() => map.resize());
 }
 
 if (savedSidebarState === "collapsed" && window.innerWidth > 760) {
