@@ -37,7 +37,10 @@ function escapeHtml(str) {
   }[m]));
 }
 
-// ---------- Eastern Visayas map setup ----------
+// ---------- Campus-only map setup ----------
+// The map is deliberately locked to just the Palo National High School
+// grounds — maxBounds stops panning away from campus, minZoom/maxZoom stop
+// zooming out to the wider world or in past street level.
 
 const map = new maplibregl.Map({
   container: "map",
@@ -47,10 +50,34 @@ const map = new maplibregl.Map({
   pitch: DEFAULT_VIEW.pitch,
   bearing: DEFAULT_VIEW.bearing,
   maxBounds: configBounds(),
-  minZoom: 7,
+  minZoom: 16.5,
   maxZoom: 20,
   attributionControl: { compact: true },
 });
+
+const sidebarToggle = document.getElementById("sidebarToggle");
+const shell = document.querySelector(".app-shell");
+const savedSidebarState = localStorage.getItem("pnhs_map_sidebar");
+
+function setSidebarCollapsed(collapsed) {
+  shell.classList.toggle("sidebar-collapsed", collapsed);
+  sidebarToggle.setAttribute("aria-expanded", String(!collapsed));
+  sidebarToggle.setAttribute("aria-label", collapsed ? "Expand map panel" : "Collapse map panel");
+  sidebarToggle.title = collapsed ? "Expand map panel" : "Collapse map panel";
+  sidebarToggle.querySelector("span").innerHTML = collapsed ? "&#x203A;" : "&#x2039;";
+  localStorage.setItem("pnhs_map_sidebar", collapsed ? "collapsed" : "expanded");
+  window.requestAnimationFrame(() => map.resize());
+}
+
+if (savedSidebarState === "collapsed" && window.innerWidth > 760) {
+  setSidebarCollapsed(true);
+}
+
+sidebarToggle.addEventListener("click", () => {
+  setSidebarCollapsed(!shell.classList.contains("sidebar-collapsed"));
+});
+
+window.addEventListener("resize", () => map.resize());
 
 // ---------- Tilt / rotate controls (the "3D street view" camera) ----------
 document.getElementById("tiltUp").addEventListener("click", () => map.easeTo({ pitch: Math.min(map.getPitch() + 12, 75), duration: 300 }));
