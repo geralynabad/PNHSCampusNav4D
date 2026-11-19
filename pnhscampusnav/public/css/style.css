@@ -254,7 +254,7 @@ input, select { font-family: inherit; font-size: 0.95rem; }
   transition: padding .24s var(--ease-out), overflow .24s var(--ease-out);
 }
 .sidebar-toggle {
-  position: absolute; z-index: 1000; top: 50%; right: -28px;
+  position: fixed; z-index: 1000; top: 50%; left: 292px;
   width: 56px; height: 56px; border: 3px solid #fff; border-radius: 50%;
   background: var(--forest-700); color: #fff;
   box-shadow: 0 5px 18px rgba(22,40,28,.28); display: grid; place-items: center;
@@ -269,8 +269,7 @@ input, select { font-family: inherit; font-size: 0.95rem; }
 }
 .app-shell.sidebar-collapsed .sidebar > :not(.sidebar-toggle) { visibility: hidden; }
 .app-shell.sidebar-collapsed .sidebar-toggle {
-  right: -28px;
-  position: absolute;
+  left: 0;
   visibility: visible;
   z-index: 1001;
 }
