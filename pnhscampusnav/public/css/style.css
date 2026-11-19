@@ -254,14 +254,14 @@ input, select { font-family: inherit; font-size: 0.95rem; }
   transition: padding .24s var(--ease-out), overflow .24s var(--ease-out);
 }
 .sidebar-toggle {
-  position: absolute; z-index: 1000; top: 50%; right: -22px;
-  width: 44px; height: 44px; border: 2px solid var(--line); border-radius: 50%;
-  background: var(--paper-raised); color: var(--forest-700);
-  box-shadow: var(--shadow-card); display: grid; place-items: center;
-  font-size: 1.7rem; line-height: 1; padding: 0 0 4px;
+  position: absolute; z-index: 1000; top: 50%; right: -28px;
+  width: 56px; height: 56px; border: 3px solid #fff; border-radius: 50%;
+  background: var(--forest-700); color: #fff;
+  box-shadow: 0 5px 18px rgba(22,40,28,.28); display: grid; place-items: center;
+  font-size: 2.2rem; line-height: 1; padding: 0 0 5px;
   transition: right .24s var(--ease-out), transform .24s var(--ease-out), background .15s var(--ease);
 }
-.sidebar-toggle:hover { background: var(--forest-50); }
+.sidebar-toggle:hover { background: var(--forest-800); }
 .app-shell.sidebar-collapsed { grid-template-columns: 0 1fr; }
 .app-shell.sidebar-collapsed .sidebar {
   padding-left: 0; padding-right: 0; overflow: hidden;
