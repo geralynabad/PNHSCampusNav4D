@@ -49,7 +49,7 @@ function flash(el, message, ok) {
   setTimeout(() => el.classList.remove("show"), 4000);
 }
 
-// ---------- 10 km campus jurisdiction map setup ----------
+// ---------- Campus-only map setup ----------
 
 const map = new maplibregl.Map({
   container: "map",
@@ -59,7 +59,7 @@ const map = new maplibregl.Map({
   pitch: DEFAULT_VIEW.pitch,
   bearing: DEFAULT_VIEW.bearing,
   maxBounds: configBounds(),
-  minZoom: 7,
+  minZoom: 16.5,
   maxZoom: 20,
   attributionControl: { compact: true },
 });
@@ -96,6 +96,26 @@ async function loadBoundary(fit) {
 
 // ---------- Tabs ----------
 let activeTab = "live";
+const sidebarToggle = $("sidebarToggle");
+const shell = document.querySelector(".app-shell");
+const savedSidebarState = localStorage.getItem("pnhs_admin_sidebar");
+
+function setSidebarCollapsed(collapsed) {
+  shell.classList.toggle("sidebar-collapsed", collapsed);
+  sidebarToggle.setAttribute("aria-expanded", String(!collapsed));
+  sidebarToggle.setAttribute("aria-label", collapsed ? "Expand admin panel" : "Collapse admin panel");
+  sidebarToggle.title = collapsed ? "Expand admin panel" : "Collapse admin panel";
+  localStorage.setItem("pnhs_admin_sidebar", collapsed ? "collapsed" : "expanded");
+}
+
+if (savedSidebarState === "collapsed" && window.innerWidth > 760) {
+  setSidebarCollapsed(true);
+}
+
+sidebarToggle.addEventListener("click", () => {
+  setSidebarCollapsed(!shell.classList.contains("sidebar-collapsed"));
+});
+
 document.querySelectorAll(".tab").forEach((btn) => {
   btn.addEventListener("click", () => {
     if (btn.dataset.tab === activeTab) return;
