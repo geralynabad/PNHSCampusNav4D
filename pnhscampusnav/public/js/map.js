@@ -64,14 +64,16 @@ function setSidebarCollapsed(collapsed) {
   sidebarToggle.setAttribute("aria-expanded", String(!collapsed));
   sidebarToggle.setAttribute("aria-label", collapsed ? "Expand map panel" : "Collapse map panel");
   sidebarToggle.title = collapsed ? "Expand map panel" : "Collapse map panel";
-  sidebarToggle.querySelector("span").innerHTML = collapsed ? "&#x203A;" : "&#x2039;";
+  const mobile = window.innerWidth <= 760;
+  sidebarToggle.querySelector("span").innerHTML = mobile
+    ? (collapsed ? "&#x25BC;" : "&#x25B2;")
+    : (collapsed ? "&#x203A;" : "&#x2039;");
   localStorage.setItem("pnhs_map_sidebar", collapsed ? "collapsed" : "expanded");
   window.requestAnimationFrame(() => map.resize());
+  window.setTimeout(() => map.resize(), 260);
 }
 
-if (savedSidebarState === "collapsed" && window.innerWidth > 760) {
-  setSidebarCollapsed(true);
-}
+setSidebarCollapsed(savedSidebarState === "collapsed" && window.innerWidth > 760);
 
 sidebarToggle.addEventListener("click", () => {
   setSidebarCollapsed(!shell.classList.contains("sidebar-collapsed"));
