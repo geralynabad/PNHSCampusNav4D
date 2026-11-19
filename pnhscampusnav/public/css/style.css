@@ -304,11 +304,11 @@ input, select { font-family: inherit; font-size: 0.95rem; }
     display: grid;
     position: fixed;
     top: 10px;
-    right: auto;
-    left: 8px;
-    width: 44px;
-    height: 44px;
-    font-size: 1.35rem;
+    right: 8px;
+    left: auto;
+    width: 40px;
+    height: 40px;
+    font-size: 1.15rem;
     padding: 0;
   }
   .sidebar-toggle span,
@@ -317,8 +317,8 @@ input, select { font-family: inherit; font-size: 0.95rem; }
     transform: none;
   }
   .app-shell.sidebar-collapsed .sidebar-toggle {
-    left: 8px;
-    right: auto;
+    right: 8px;
+    left: auto;
   }
   .sidebar .brand { display: none; }
   .map-wrap { order: 3; }
