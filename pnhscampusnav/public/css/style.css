@@ -247,6 +247,7 @@ input, select { font-family: inherit; font-size: 0.95rem; }
 
 /* ---------- App shell ---------- */
 .app-shell { height: 100vh; display: grid; grid-template-columns: 320px 1fr; transition: grid-template-columns .24s var(--ease-out); }
+.mobile-header { display: none; }
 .sidebar {
   position: relative;
   background: var(--paper-raised); border-right: 1px solid var(--line);
@@ -275,15 +276,34 @@ input, select { font-family: inherit; font-size: 0.95rem; }
 }
 .app-shell.sidebar-collapsed .sidebar-toggle span { display: block; transform: rotate(180deg); }
 @media (max-width: 760px) {
-  .app-shell { grid-template-columns: 1fr; grid-template-rows: minmax(34vh, 38vh) minmax(62vh, 66vh); height: 100dvh; }
-  .app-shell.sidebar-collapsed { grid-template-columns: 1fr; grid-template-rows: 0 100dvh; }
-  .sidebar { order: 1; max-height: 38vh; min-height: 34vh; border-right: 0; border-bottom: 1px solid var(--line); }
+  .app-shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: 64px minmax(34vh, 38vh) minmax(62vh, 66vh);
+    height: 100dvh;
+  }
+  .app-shell.sidebar-collapsed {
+    grid-template-columns: 1fr;
+    grid-template-rows: 64px 0 calc(100dvh - 64px);
+  }
+  .mobile-header {
+    display: flex;
+    order: 1;
+    height: 64px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px 58px 8px 12px;
+    background: var(--paper-raised);
+    border-bottom: 1px solid var(--line);
+  }
+  .mobile-header .brand-logo { width: 36px; height: 36px; }
+  .sidebar { order: 2; max-height: 38vh; min-height: 34vh; border-right: 0; border-bottom: 1px solid var(--line); }
   .app-shell.sidebar-collapsed .sidebar { min-height: 0; max-height: 0; height: 0; padding: 0; overflow: hidden; border-bottom: 0; }
   .app-shell.sidebar-collapsed .sidebar > * { visibility: hidden; }
   .sidebar-toggle {
     display: grid;
     position: fixed;
-    top: 8px;
+    top: 10px;
     right: auto;
     left: 8px;
     width: 44px;
@@ -300,13 +320,14 @@ input, select { font-family: inherit; font-size: 0.95rem; }
     left: 8px;
     right: auto;
   }
-  .map-wrap { order: 2; }
+  .sidebar .brand { display: none; }
+  .map-wrap { order: 3; }
 }
 @media (max-width: 760px) and (orientation: portrait) {
   .app-shell {
-    grid-template-rows: minmax(34vh, 38vh) minmax(62vh, 66vh);
+    grid-template-rows: 64px minmax(34vh, 38vh) minmax(62vh, 66vh);
   }
-  .app-shell.sidebar-collapsed { grid-template-rows: 0 100dvh; }
+  .app-shell.sidebar-collapsed { grid-template-rows: 64px 0 calc(100dvh - 64px); }
   .sidebar {
     max-height: 38vh;
     min-height: 34vh;

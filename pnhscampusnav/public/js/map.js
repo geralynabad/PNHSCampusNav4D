@@ -17,11 +17,15 @@ const trackSection = document.getElementById("trackSection");
 
 if (isGuest) {
   roleChip.textContent = "Guest";
+  document.getElementById("mobileRoleChip").textContent = "Guest";
   userLabel.textContent = "Viewing as guest";
   signInLink.classList.remove("hidden-form");
 } else {
   roleChip.textContent = user.role;
   roleChip.classList.toggle("admin", user.role === "admin");
+  const mobileRoleChip = document.getElementById("mobileRoleChip");
+  mobileRoleChip.textContent = user.role;
+  mobileRoleChip.classList.toggle("admin", user.role === "admin");
   userLabel.textContent = user.full_name;
   logoutBtn.classList.remove("hidden-form");
   initLogoutConfirmation(logoutBtn, () => {
