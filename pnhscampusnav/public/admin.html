@@ -83,11 +83,9 @@
 
         <div>
           <p class="panel-title">Campus boundary</p>
-          <p class="hint">Draw the school's outline once. Everything outside it is hidden and the map locks to the campus.</p>
-          <p id="boundaryStatus" class="hint"></p>
           <div class="field-row">
-            <button id="drawBoundary" class="btn-small">Draw boundary</button>
-            <button id="clearBoundary" class="link-btn danger hidden-form" style="margin-bottom:16px;">Remove boundary</button>
+            <button id="drawBoundary" class="btn-small tooltip-trigger" data-tooltip="Draw the school's outline once. Everything outside it is hidden and the map locks to the campus." aria-label="Draw campus boundary">Draw boundary</button>
+            <button id="clearBoundary" class="link-btn danger hidden-form tooltip-trigger" data-tooltip="No boundary yet — the map shows the surrounding area." aria-label="Remove campus boundary">Remove boundary</button>
           </div>
         </div>
 
@@ -101,12 +99,30 @@
         <div>
           <p class="panel-title">3D building shapes</p>
           <p class="hint">Each building needs a footprint (its outline) and a height before it shows as a 3D block. Draw it once per building.</p>
-          <ul id="buildingList" class="manage-list"></ul>
+          <div class="field">
+            <label for="buildingList">Building</label>
+            <select id="buildingList"></select>
+          </div>
+          <div id="buildingListActions" class="field-row">
+            <button id="buildingDraw" class="btn-small">Draw shape</button>
+            <button id="buildingDelete" class="link-btn danger">Delete</button>
+          </div>
         </div>
 
         <div>
           <p class="panel-title">All rooms (<span id="roomCount">0</span>)</p>
-          <ul id="roomList" class="manage-list"></ul>
+          <div class="field">
+            <label for="roomFilterBuilding">Building</label>
+            <select id="roomFilterBuilding"></select>
+          </div>
+          <div class="field">
+            <label for="roomList">Room</label>
+            <select id="roomList"></select>
+          </div>
+          <div id="roomListActions" class="field-row">
+            <button id="roomEdit" class="btn-small">Edit</button>
+            <button id="roomDelete" class="link-btn danger">Delete</button>
+          </div>
         </div>
       </section>
 

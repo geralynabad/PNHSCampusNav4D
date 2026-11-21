@@ -86,7 +86,9 @@ document.getElementById("resetView").addEventListener("click", () => goHome(500)
 
 function renderBoundaryStatus() {
   const has = Array.isArray(currentBoundary) && currentBoundary.length >= 3;
-  $("boundaryStatus").textContent = has ? `Boundary set (${currentBoundary.length} corners).` : "No boundary yet — the map shows the surrounding area.";
+  if ($("boundaryStatus")) {
+    $("boundaryStatus").textContent = has ? `Boundary set (${currentBoundary.length} corners).` : "No boundary yet — the map shows the surrounding area.";
+  }
   $("drawBoundary").textContent = has ? "Redraw boundary" : "Draw boundary";
   $("clearBoundary").classList.toggle("hidden-form", !has);
 }
@@ -330,7 +332,19 @@ async function loadBuildings() {
   const current = sel.value;
   sel.innerHTML = buildings.map((b) => `<option value="${b.id}">${escapeHtml(b.name)}</option>`).join("");
   if (current) sel.value = current;
+  renderRoomFilterBuildings(buildings);
 }
+
+function renderRoomFilterBuildings(buildings) {
+  const sel = $("roomFilterBuilding");
+  if (!sel) return;
+  const current = sel.value;
+  sel.innerHTML = buildings.map((b) => `<option value="${b.id}">${escapeHtml(b.name)}</option>`).join("");
+  if (current) sel.value = current;
+  renderRoomList();
+}
+
+$("roomFilterBuilding").addEventListener("change", renderRoomList);
 
 function resetRoomForm() {
   editingId = null;
@@ -380,37 +394,56 @@ $("addBuilding").addEventListener("click", async () => {
 });
 
 function renderRoomList() {
-  $("roomCount").textContent = allRooms.length;
-  const ul = $("roomList");
-  ul.innerHTML = "";
-  allRooms.forEach((c) => {
-    const li = document.createElement("li");
-    li.innerHTML = `<div class="item-main"><div class="item-title">${escapeHtml(c.name || c.room_number)}</div>
-      <div class="item-sub">${escapeHtml(c.building_name)} &middot; Room ${escapeHtml(c.room_number)}${c.floor ? ` &middot; ${escapeHtml(formatFloor(c.floor))}` : ""}</div></div>
-      <div class="item-actions"><button class="link-btn" data-act="edit">Edit</button><button class="link-btn danger" data-act="del">Delete</button></div>`;
-    li.querySelector('[data-act="edit"]').addEventListener("click", () => {
-      editingId = c.id;
-      $("roomBuilding").value = c.building_id;
-      $("roomNumber").value = c.room_number;
-      $("roomFloor").value = c.floor || "";
-      $("roomName").value = c.name || "";
-      $("roomLat").value = c.lat;
-      $("roomLng").value = c.lng;
-      $("roomFormTitle").textContent = "Edit room";
-      $("saveRoom").querySelector(".btn-label").textContent = "Update room";
-      $("cancelEdit").classList.remove("hidden-form");
-      map.flyTo({ center: [c.lng, c.lat], zoom: 19.3, duration: 600 });
-      if (pickMarker) pickMarker.setLngLat([c.lng, c.lat]);
-      else pickMarker = new maplibregl.Marker({ element: makeEl("mk mk-pick"), anchor: "center" }).setLngLat([c.lng, c.lat]).addTo(map);
-    });
-    li.querySelector('[data-act="del"]').addEventListener("click", async () => {
-      if (!confirm(`Delete ${c.name || c.room_number}?`)) return;
-      try { await api("/api/classrooms/" + c.id, "DELETE"); await refreshRooms(); }
-      catch (err) { flash($("formMsg"), err.message, false); }
-    });
-    ul.appendChild(li);
-  });
+  const filterBuilding = Number($("roomFilterBuilding").value);
+  const select = $("roomList");
+  const current = select.value;
+  const rooms = allRooms.filter((room) => !filterBuilding || room.building_id === filterBuilding);
+  $("roomCount").textContent = rooms.length;
+  select.innerHTML = rooms.map((room) => {
+    const label = `${room.name || room.room_number} — Room ${room.room_number}${room.floor ? ` — ${formatFloor(room.floor)}` : ""}`;
+    return `<option value="${room.id}">${escapeHtml(label)}</option>`;
+  }).join("");
+  if (current) select.value = current;
+  if (!select.value && rooms.length) select.value = rooms[0].id;
+  const hasRooms = rooms.length > 0;
+  $("roomEdit").disabled = !hasRooms;
+  $("roomDelete").disabled = !hasRooms;
 }
+
+function selectedRoom() {
+  const id = Number($("roomList").value);
+  return allRooms.find((room) => room.id === id) || null;
+}
+
+$("roomEdit").addEventListener("click", () => {
+  const room = selectedRoom();
+  if (!room) return;
+  editingId = room.id;
+  $("roomBuilding").value = room.building_id;
+  $("roomNumber").value = room.room_number;
+  $("roomFloor").value = room.floor || "";
+  $("roomName").value = room.name || "";
+  $("roomLat").value = room.lat;
+  $("roomLng").value = room.lng;
+  $("roomFormTitle").textContent = "Edit room";
+  $("saveRoom").querySelector(".btn-label").textContent = "Update room";
+  $("cancelEdit").classList.remove("hidden-form");
+  map.flyTo({ center: [room.lng, room.lat], zoom: 19.3, duration: 600 });
+  if (pickMarker) pickMarker.setLngLat([room.lng, room.lat]);
+  else pickMarker = new maplibregl.Marker({ element: makeEl("mk mk-pick"), anchor: "center" }).setLngLat([room.lng, room.lat]).addTo(map);
+});
+
+$("roomDelete").addEventListener("click", async () => {
+  const room = selectedRoom();
+  if (!room) return;
+  if (!confirm(`Delete ${room.name || room.room_number}?`)) return;
+  try {
+    await api("/api/classrooms/" + room.id, "DELETE");
+    await refreshRooms();
+  } catch (err) {
+    flash($("formMsg"), err.message, false);
+  }
+});
 
 // ---------- Drawing tool (building shapes, campus boundary, walkways) ----------
 const drawToolbar = $("drawToolbar");
@@ -658,34 +691,55 @@ async function loadBuildingList() {
 }
 
 function renderBuildingList() {
-  const ul = $("buildingList");
-  if (!ul) return;
-  ul.innerHTML = "";
-  allBuildings.forEach((b) => {
-    const hasShape = Array.isArray(b.footprint) && b.footprint.length >= 3;
-    const li = document.createElement("li");
-    li.innerHTML = `<div class="item-main"><div class="item-title">${escapeHtml(b.name)}</div>
-      <div class="item-sub">${hasShape ? `${b.height_m}m tall &middot; shape set` : "No 3D shape yet"}</div></div>
-      <div class="item-actions">
-        <button class="link-btn" data-act="draw">${hasShape ? "Redraw" : "Draw shape"}</button>
-        <button class="link-btn danger" data-act="del">Delete</button>
-      </div>`;
-    li.querySelector('[data-act="draw"]').addEventListener("click", () => startDrawing(b.id, b.footprint, b.height_m));
-    li.querySelector('[data-act="del"]').addEventListener("click", async () => {
-      if (!confirm(`Delete ${b.name}? This also deletes its rooms.`)) return;
-      try {
-        await api("/api/classrooms/buildings/" + b.id, "DELETE");
-        await loadBuildings();
-        await loadBuildingList();
-        await loadBuildingShapes();
-        await refreshRooms();
-      } catch (err) {
-        flash($("formMsg"), err.message, false);
-      }
-    });
-    ul.appendChild(li);
-  });
+  const select = $("buildingList");
+  if (!select) return;
+  const current = select.value;
+  select.innerHTML = allBuildings.map((building) =>
+    `<option value="${building.id}">${escapeHtml(building.name)}</option>`
+  ).join("");
+  if (current) select.value = current;
+  updateBuildingActions();
 }
+
+function selectedBuilding() {
+  const id = Number($("buildingList").value);
+  return allBuildings.find((building) => building.id === id) || null;
+}
+
+function updateBuildingActions() {
+  const building = selectedBuilding();
+  if (!building) {
+    $("buildingDraw").disabled = true;
+    $("buildingDelete").disabled = true;
+    return;
+  }
+  const hasShape = Array.isArray(building.footprint) && building.footprint.length >= 3;
+  $("buildingDraw").textContent = hasShape ? "Redraw shape" : "Draw shape";
+  $("buildingDraw").disabled = false;
+  $("buildingDelete").disabled = false;
+}
+
+$("buildingList").addEventListener("change", updateBuildingActions);
+
+$("buildingDraw").addEventListener("click", () => {
+  const building = selectedBuilding();
+  if (building) startDrawing(building.id, building.footprint, building.height_m);
+});
+
+$("buildingDelete").addEventListener("click", async () => {
+  const building = selectedBuilding();
+  if (!building) return;
+  if (!confirm(`Delete ${building.name}? This also deletes its rooms.`)) return;
+  try {
+    await api("/api/classrooms/buildings/" + building.id, "DELETE");
+    await loadBuildings();
+    await loadBuildingList();
+    await loadBuildingShapes();
+    await refreshRooms();
+  } catch (err) {
+    flash($("formMsg"), err.message, false);
+  }
+});
 
 // ---------- USERS ----------
 async function loadUsers() {

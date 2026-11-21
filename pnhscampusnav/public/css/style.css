@@ -58,6 +58,36 @@ input, select { font-family: inherit; font-size: 0.95rem; }
 }
 
 .hidden-form { display: none !important; }
+.tooltip-trigger { position: relative; }
+.tooltip-trigger[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  width: max-content;
+  max-width: 280px;
+  transform: translate(-50%, 4px);
+  padding: 8px 10px;
+  border-radius: var(--radius-s);
+  background: var(--forest-900);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: left;
+  box-shadow: var(--shadow-pop);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity .12s var(--ease), transform .12s var(--ease), visibility .12s var(--ease);
+  z-index: 100;
+}
+.tooltip-trigger[data-tooltip]:hover::after,
+.tooltip-trigger[data-tooltip]:focus-visible::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
+}
 
 /* ---------- Motion library ---------- */
 @keyframes fadeRise {
