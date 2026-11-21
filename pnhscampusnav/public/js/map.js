@@ -177,6 +177,18 @@ async function loadClassrooms() {
 const searchInput = document.getElementById("searchInput");
 const searchResults = document.getElementById("searchResults");
 
+function formatFloor(floor) {
+  const value = String(floor || "").trim();
+  if (!value) return "";
+  const match = value.match(/^(\d+)$/);
+  if (!match) return value;
+  const number = Number(match[1]);
+  const suffix = number % 100 >= 11 && number % 100 <= 13
+    ? "th"
+    : ({ 1: "st", 2: "nd", 3: "rd" }[number % 10] || "th");
+  return `${number}${suffix} Floor`;
+}
+
 searchInput.addEventListener("input", () => {
   const q = searchInput.value.trim().toLowerCase();
   searchResults.innerHTML = "";
@@ -186,14 +198,19 @@ searchInput.addEventListener("input", () => {
     .filter(({ data }) =>
       data.room_number.toLowerCase().includes(q) ||
       (data.name || "").toLowerCase().includes(q) ||
-      data.building_name.toLowerCase().includes(q)
+      data.building_name.toLowerCase().includes(q) ||
+      (data.floor || "").toLowerCase().includes(q) ||
+      formatFloor(data.floor).toLowerCase().includes(q)
     )
     .slice(0, 8);
 
   matches.forEach(({ data, marker }, i) => {
     const li = document.createElement("li");
     li.style.animationDelay = (i * 22) + "ms";
-    li.innerHTML = `${escapeHtml(data.name || data.room_number)}<div class="room-building">${escapeHtml(data.building_name)} &middot; Room ${escapeHtml(data.room_number)}</div>`;
+    const floorBadge = data.floor
+      ? `<span class="room-floor">${escapeHtml(formatFloor(data.floor))}</span>`
+      : "";
+    li.innerHTML = `${escapeHtml(data.name || data.room_number)} ${floorBadge}<div class="room-building">${escapeHtml(data.building_name)} &middot; Room ${escapeHtml(data.room_number)}</div>`;
     li.addEventListener("click", () => {
       map.flyTo({ center: marker.getLngLat(), zoom: 19.3, pitch: 60, duration: 700 });
       marker.togglePopup();

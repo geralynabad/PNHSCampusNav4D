@@ -190,6 +190,18 @@ async function loadBuildingShapes() {
 const classroomMarkers = new Map();
 let allClassrooms = [];
 
+function formatFloor(floor) {
+  const value = String(floor || "").trim();
+  if (!value) return "";
+  const match = value.match(/^(\d+)$/);
+  if (!match) return value;
+  const number = Number(match[1]);
+  const suffix = number % 100 >= 11 && number % 100 <= 13
+    ? "th"
+    : ({ 1: "st", 2: "nd", 3: "rd" }[number % 10] || "th");
+  return `${number}${suffix} Floor`;
+}
+
 async function refreshClassrooms() {
   const data = await api("/api/classrooms");
   allClassrooms = data.classrooms;
@@ -216,12 +228,17 @@ $("searchInput").addEventListener("input", () => {
     .filter(({ data }) =>
       data.room_number.toLowerCase().includes(q) ||
       (data.name || "").toLowerCase().includes(q) ||
-      data.building_name.toLowerCase().includes(q))
+      data.building_name.toLowerCase().includes(q) ||
+      (data.floor || "").toLowerCase().includes(q) ||
+      formatFloor(data.floor).toLowerCase().includes(q))
     .slice(0, 8)
     .forEach(({ data, marker }, i) => {
       const li = document.createElement("li");
       li.style.animationDelay = (i * 22) + "ms";
-      li.innerHTML = `${escapeHtml(data.name || data.room_number)}<div class="room-building">${escapeHtml(data.building_name)}</div>`;
+      const floorBadge = data.floor
+        ? `<span class="room-floor">${escapeHtml(formatFloor(data.floor))}</span>`
+        : "";
+      li.innerHTML = `${escapeHtml(data.name || data.room_number)} ${floorBadge}<div class="room-building">${escapeHtml(data.building_name)} &middot; Room ${escapeHtml(data.room_number)}</div>`;
       li.addEventListener("click", () => {
         map.flyTo({ center: marker.getLngLat(), zoom: 19.3, pitch: 60, duration: 700 });
         marker.togglePopup();
@@ -356,7 +373,7 @@ $("addBuilding").addEventListener("click", async () => {
     $("buildingName").value = "";
     await loadBuildings();
     await loadBuildingList();
-    flash($("formMsg"), "Building added. Now draw its 3D shape below.", true);
+    flash($("formMsg"), "Building added successfully. A 3D shape is optional.", true);
   } catch (err) {
     flash($("formMsg"), err.message, false);
   }
@@ -369,7 +386,7 @@ function renderRoomList() {
   allClassrooms.forEach((c) => {
     const li = document.createElement("li");
     li.innerHTML = `<div class="item-main"><div class="item-title">${escapeHtml(c.name || c.room_number)}</div>
-      <div class="item-sub">${escapeHtml(c.building_name)} &middot; Room ${escapeHtml(c.room_number)}</div></div>
+      <div class="item-sub">${escapeHtml(c.building_name)} &middot; Room ${escapeHtml(c.room_number)}${c.floor ? ` &middot; ${escapeHtml(formatFloor(c.floor))}` : ""}</div></div>
       <div class="item-actions"><button class="link-btn" data-act="edit">Edit</button><button class="link-btn danger" data-act="del">Delete</button></div>`;
     li.querySelector('[data-act="edit"]').addEventListener("click", () => {
       editingId = c.id;

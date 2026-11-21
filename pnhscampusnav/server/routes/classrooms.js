@@ -24,6 +24,11 @@ function parseFootprint(v) {
   return v ?? null;
 }
 
+function serializeFootprint(footprint) {
+  if (!Array.isArray(footprint) || footprint.length < 3) return null;
+  return JSON.stringify(footprint);
+}
+
 router.get("/buildings", async (req, res) => {
   try {
     const [rows] = await pool.query("SELECT * FROM buildings ORDER BY name");
@@ -40,7 +45,7 @@ router.post("/buildings", requireAuth, requireRole("admin"), async (req, res) =>
     if (!name) return res.status(400).json({ error: "Building name is required" });
     const [result] = await pool.query(
       "INSERT INTO buildings (name, description, footprint, height_m) VALUES (?, ?, ?, ?)",
-      [name, description || null, footprint ? JSON.stringify(footprint) : null, height_m ?? 9]
+      [name.trim(), description || null, serializeFootprint(footprint), height_m ?? 9]
     );
     res.status(201).json({ id: result.insertId });
   } catch (err) {
@@ -63,7 +68,7 @@ router.put("/buildings/:id", requireAuth, requireRole("admin"), async (req, res)
       [
         name ?? existing.name,
         description ?? existing.description,
-        footprint !== undefined ? JSON.stringify(footprint) : JSON.stringify(parseFootprint(existing.footprint)),
+        footprint !== undefined ? serializeFootprint(footprint) : serializeFootprint(parseFootprint(existing.footprint)),
         height_m ?? existing.height_m,
         req.params.id,
       ]

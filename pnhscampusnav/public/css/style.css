@@ -381,6 +381,18 @@ input, select { font-family: inherit; font-size: 0.95rem; }
 }
 .result-list li:hover { background: var(--forest-50); border-color: var(--line); }
 .result-list li .room-building { color: var(--ink-soft); font-size: 0.78rem; }
+.room-floor {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--forest-100);
+  color: var(--forest-800);
+  font-size: 0.68rem;
+  font-weight: 800;
+  vertical-align: 2px;
+  white-space: nowrap;
+}
 
 .track-card {
   border: 1.5px solid var(--line); border-radius: var(--radius-m); padding: 14px;
