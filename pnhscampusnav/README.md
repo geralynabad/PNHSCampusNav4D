@@ -1,7 +1,7 @@
 # PNHSCampusNav
 
-A web-based classroom navigation system with GPS live tracking for Palo
-National High School — interactive campus map, classroom search, real-time
+A web-based room navigation system with GPS live tracking for Palo
+National High School — interactive campus map, room search, real-time
 location tracking, and an admin dashboard.
 
 Built to match the approved technology stack:
@@ -99,7 +99,7 @@ before sharing the deployment publicly.
 
 | Username | Password | Role |
 |---|---|---|
-| `admin` | `admin123` | Admin — live dashboard, classroom/user management |
+| `admin` | `admin123` | Admin — live dashboard, room/user management |
 | `staff1` | `staff123` | Staff — tracked user |
 | `student1` | `student123` | Student — tracked user |
 
@@ -114,7 +114,7 @@ untextured **3D blocks** you can tilt and rotate (▲ ▼ ↺ ↻ buttons, top-r
 of the map; ⟲ resets the view). All of the seeded data is a placeholder, so
 before your defense:
 
-1. **Draw the campus boundary.** Sign in as `admin` → **Classrooms** tab →
+1. **Draw the campus boundary.** Sign in as `admin` → **Rooms** tab →
    *Campus boundary* → **Draw boundary**. Click around the edge of the school
    grounds (at least 3 corners), then **Finish & save**. From then on,
    everything outside that outline is covered and hidden for every user, and
@@ -123,17 +123,17 @@ before your defense:
    (Before a boundary exists, the map is locked to a starting box set in
    `public/js/campus-config.js` — put the school's real center coordinates
    there so you can find the campus to trace it.)
-2. **Draw each building's 3D shape.** Sign in as `admin` → **Classrooms** tab
+2. **Draw each building's 3D shape.** Sign in as `admin` → **Rooms** tab
    → *3D building shapes* → **Draw shape** (or **Redraw**) next to a building.
    Click the map to place the building's corners (at least 3), set its
    height in meters (about 4 m per floor), then **Finish & save**. The seeded
    Main / Annex / Administration blocks are placeholders: redraw or delete them.
-3. **Place each classroom.** In the same tab, add classrooms and **click the
+3. **Place each room.** In the same tab, add rooms and **click the
    map** where each room is — latitude and longitude fill in automatically.
 
 OpenStreetMap has no height data for this campus, so building heights must be
 entered by hand; there is no way to download them.
-4. **Trace the walkways.** Still in the **Classrooms** tab, under *Walkways
+4. **Trace the walkways.** Still in the **Rooms** tab, under *Walkways
    (route guide)*, click **Draw walkway** and click along each path people
    really walk: the loop road, covered walks, shortcuts between buildings.
    Click **Finish & save** for each one. Where two walkways meet, click right
@@ -146,13 +146,13 @@ entered by hand; there is no way to download them.
 | Tab | What it does |
 |---|---|
 | **Live** | Real-time map + list of every student/staff member currently sharing their location |
-| **Classrooms** | Add / edit / delete classrooms (click the map to set coordinates), add buildings, draw each building's 3D shape, the campus boundary, and the walkways |
+| **Rooms** | Add / edit / delete rooms (click the map to set coordinates), add buildings, draw each building's 3D shape, the campus boundary, and the walkways |
 | **Users** | Create accounts with any role, change roles, delete accounts |
 | **History** | Pick a tracked user and draw their recent movement trail on the map |
 
 ## 6c. Route guide ("Navigate here")
 
-On the map page, search for a classroom (or tap its marker) and press
+On the map page, search for a room (or tap its marker) and press
 **Navigate here**. The sidebar shows a *Route guide* card with the destination,
 the walking distance and an estimated time. A blue line leads from the user's
 live position to the destination along the traced walkways, and it shortens
@@ -177,7 +177,7 @@ read outdoors in daylight rather than a dim indoor dashboard:
 - **Palette:** a brighter, warmer paper background (`#faf9f4`) instead of a
   dim gray, and a more saturated primary green (`#2b6138`) instead of a
   muted/pastel tone — both chosen so the chrome holds contrast against
-  glare rather than washing out. Classroom and live-user markers carry a
+  glare rather than washing out. Room and live-user markers carry a
   thick white ring and drop shadow specifically so they stay legible
   against bright map tiles.
 - **Gold is reserved for "live."** It only appears on something currently
@@ -205,14 +205,14 @@ pnhscampusnav/
 │   ├── middleware/auth.js  JWT verification + role checks
 │   └── routes/
 │       ├── auth.js          login / register
-│       ├── classrooms.js    campus map data (CRUD, admin-gated writes)
+│       ├── classrooms.js    room/campus map data (CRUD, admin-gated writes)
 │       ├── users.js         account management (admin only)
 │       ├── campus.js        campus boundary + walkways (read: everyone, write: admin)
 │       └── locations.js     location history (admin only)
 ├── public/
 │   ├── index.html          Login / register / guest entry
 │   ├── map.html             Student / staff / guest map view
-│   ├── admin.html           Admin dashboard (Live / Classrooms / Users / History)
+│   ├── admin.html           Admin dashboard (Live / Rooms / Users / History)
 │   ├── css/style.css        Design tokens, components, and animations
 │   ├── js/{auth,map,admin}.js
 │   ├── js/campus-config.js  Starting center / box / map style (edit this)
@@ -240,7 +240,7 @@ pnhscampusnav/
 5. When a user stops sharing (or disconnects), they're removed from the
    live dashboard.
 
-Guests and logged-out visitors can view the map and search for classrooms,
+Guests and logged-out visitors can view the map and search for rooms,
 but cannot broadcast a location — matching the system proposal's guest
 role (view-only, not tracked).
 
@@ -252,10 +252,10 @@ role (view-only, not tracked).
 - The map background needs an internet connection (it streams from tiles.openfreemap.org); the app itself runs locally.
 - "3D street view" means a tilted/rotatable camera over untextured 3D building blocks — there are no photos or 360° imagery.
 - The cover hides the surrounding map but does not stop someone physically being outside the boundary: a tracked user outside it still shows up on the admin dashboard if inside the lock area.
-- Classroom markers sit at ground level and don't follow the 3D height of a building when tilted.
+- Room markers sit at ground level and don't follow the 3D height of a building when tilted.
 - No turn-by-turn walking directions — only live position + labeled map.
 - Location accuracy depends on the device's GPS and may drift indoors.
 - No NFC/QR checkpoints are used — tracking is GPS-only, exactly as scoped.
 - Editing or deleting a *building* is not in the UI yet (you can add
   buildings; deleting one is available via `DELETE /api/classrooms/buildings/:id`,
-  which also removes its classrooms).
+  which also removes its rooms).

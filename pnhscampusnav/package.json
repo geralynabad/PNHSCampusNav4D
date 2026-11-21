@@ -1,7 +1,7 @@
 {
   "name": "pnhscampusnav",
   "version": "1.0.0",
-  "description": "PNHSCampusNav: A Web-Based Classroom Navigation System with GPS Live Tracking for Palo National High School",
+  "description": "PNHSCampusNav: A Web-Based Room Navigation System with GPS Live Tracking for Palo National High School",
   "main": "server/server.js",
   "engines": {
     "node": ">=18"

@@ -14,8 +14,8 @@ router.get("/", async (req, res) => {
     );
     res.json({ classrooms: rows });
   } catch (err) {
-    console.error("List classrooms error:", err);
-    res.status(500).json({ error: "Server error loading classrooms" });
+    console.error("List rooms error:", err);
+    res.status(500).json({ error: "Server error loading rooms" });
   }
 });
 
@@ -102,8 +102,8 @@ router.post("/", requireAuth, requireRole("admin"), async (req, res) => {
     );
     res.status(201).json({ id: result.insertId });
   } catch (err) {
-    console.error("Create classroom error:", err);
-    res.status(500).json({ error: "Server error creating classroom" });
+    console.error("Create room error:", err);
+    res.status(500).json({ error: "Server error creating room" });
   }
 });
 
@@ -112,7 +112,7 @@ router.put("/:id", requireAuth, requireRole("admin"), async (req, res) => {
     const { room_number, name, floor, lat, lng } = req.body || {};
     const [rows] = await pool.query("SELECT * FROM classrooms WHERE id = ?", [req.params.id]);
     const existing = rows[0];
-    if (!existing) return res.status(404).json({ error: "Classroom not found" });
+    if (!existing) return res.status(404).json({ error: "Room not found" });
     await pool.query(
       "UPDATE classrooms SET room_number = ?, name = ?, floor = ?, lat = ?, lng = ? WHERE id = ?",
       [
@@ -126,8 +126,8 @@ router.put("/:id", requireAuth, requireRole("admin"), async (req, res) => {
     );
     res.json({ ok: true });
   } catch (err) {
-    console.error("Update classroom error:", err);
-    res.status(500).json({ error: "Server error updating classroom" });
+    console.error("Update room error:", err);
+    res.status(500).json({ error: "Server error updating room" });
   }
 });
 
@@ -136,8 +136,8 @@ router.delete("/:id", requireAuth, requireRole("admin"), async (req, res) => {
     await pool.query("DELETE FROM classrooms WHERE id = ?", [req.params.id]);
     res.json({ ok: true });
   } catch (err) {
-    console.error("Delete classroom error:", err);
-    res.status(500).json({ error: "Server error deleting classroom" });
+    console.error("Delete room error:", err);
+    res.status(500).json({ error: "Server error deleting room" });
   }
 });
 

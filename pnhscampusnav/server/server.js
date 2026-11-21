@@ -6,7 +6,7 @@ const { Server } = require("socket.io");
 
 const { initDatabase } = require("./db/init");
 const authRoutes = require("./routes/auth");
-const classroomRoutes = require("./routes/classrooms");
+const roomRoutes = require("./routes/classrooms");
 const locationRoutes = require("./routes/locations");
 const userRoutes = require("./routes/users");
 const campusRoutes = require("./routes/campus");
@@ -22,7 +22,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "..", "public")));
 
 app.use("/api/auth", authRoutes);
-app.use("/api/classrooms", classroomRoutes);
+app.use("/api/classrooms", roomRoutes);
 app.use("/api/locations", locationRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/campus", campusRoutes);

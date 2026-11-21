@@ -30,14 +30,14 @@
 
       <nav class="tabs" role="tablist">
         <button class="tab active" data-tab="live">Live</button>
-        <button class="tab" data-tab="classrooms">Classrooms</button>
+        <button class="tab" data-tab="classrooms">Rooms</button>
         <button class="tab" data-tab="users">Users</button>
         <button class="tab" data-tab="history">History</button>
       </nav>
 
       <section id="tab-live" class="tab-panel">
         <div>
-          <p class="panel-title">Find a classroom</p>
+          <p class="panel-title">Find a room</p>
           <div class="search-box">
             <input id="searchInput" placeholder="Search room number or name…" autocomplete="off" />
             <ul id="searchResults" class="result-list"></ul>
@@ -53,7 +53,7 @@
 
       <section id="tab-classrooms" class="tab-panel" style="display:none;">
         <div>
-          <p class="panel-title" id="roomFormTitle">Add a classroom</p>
+          <p class="panel-title" id="roomFormTitle">Add a room</p>
           <div id="formMsg" class="form-msg"></div>
           <div class="field">
             <label for="roomBuilding">Building</label>
@@ -69,7 +69,7 @@
             <div class="field"><label for="roomLng">Longitude</label><input id="roomLng" /></div>
           </div>
           <p class="hint">Tip: click the map to fill in latitude and longitude.</p>
-          <button id="saveRoom" class="btn-primary"><span class="btn-label">Save classroom</span></button>
+          <button id="saveRoom" class="btn-primary"><span class="btn-label">Save room</span></button>
           <button id="cancelEdit" class="btn-ghost hidden-form" style="margin-top:8px;">Cancel edit</button>
         </div>
 
@@ -105,7 +105,7 @@
         </div>
 
         <div>
-          <p class="panel-title">All classrooms (<span id="roomCount">0</span>)</p>
+          <p class="panel-title">All rooms (<span id="roomCount">0</span>)</p>
           <ul id="roomList" class="manage-list"></ul>
         </div>
       </section>
@@ -167,14 +167,14 @@
       <div id="legend" class="map-legend">
         <button id="legendToggle" class="legend-toggle" aria-expanded="true">Legend <span>&#9662;</span></button>
         <ul class="legend-list">
-          <li><span class="lg-cell"><span class="lg lg-room"></span></span>Classroom</li>
+          <li><span class="lg-cell"><span class="lg lg-room"></span></span>Room</li>
           <li><span class="lg-cell"><span class="lg lg-block"></span></span>Building (3D block)</li>
           <li><span class="lg-cell"><span class="lg lg-self"></span></span>Student sharing live location</li>
           <li><span class="lg-cell"><span class="lg lg-staff"></span></span>Teacher / staff sharing live location</li>
           <li><span class="lg-cell"><span class="lg lg-boundary"></span></span>Campus boundary</li>
           <li><span class="lg-cell"><span class="lg lg-walkway"></span></span>Walkway (route guide follows these)</li>
           <li><span class="lg-cell"><span class="lg lg-vertex"></span></span>Corner point while drawing</li>
-          <li><span class="lg-cell"><span class="lg lg-pick"></span></span>Chosen spot for a classroom</li>
+          <li><span class="lg-cell"><span class="lg lg-pick"></span></span>Chosen spot for a room</li>
         </ul>
       </div>
       <div id="drawToolbar" class="draw-toolbar hidden-form">

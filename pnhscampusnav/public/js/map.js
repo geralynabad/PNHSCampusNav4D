@@ -144,8 +144,8 @@ async function loadBuildingShapes() {
   }
 }
 
-// ---------- Classroom markers ----------
-const classroomMarkers = new Map();
+// ---------- Room markers ----------
+const roomMarkers = new Map();
 let selfMarker = null;
 
 function makeEl(className, inner) {
@@ -155,7 +155,7 @@ function makeEl(className, inner) {
   return el;
 }
 
-async function loadClassrooms() {
+async function loadRooms() {
   const res = await fetch("/api/classrooms");
   const data = await res.json();
   data.classrooms.forEach((c) => {
@@ -169,11 +169,11 @@ async function loadClassrooms() {
       .setLngLat([c.lng, c.lat])
       .setPopup(popup)
       .addTo(map);
-    classroomMarkers.set(c.id, { marker, data: c });
+    roomMarkers.set(c.id, { marker, data: c });
   });
 }
 
-// ---------- Classroom search ----------
+// ---------- Room search ----------
 const searchInput = document.getElementById("searchInput");
 const searchResults = document.getElementById("searchResults");
 
@@ -194,7 +194,7 @@ searchInput.addEventListener("input", () => {
   searchResults.innerHTML = "";
   if (!q) return;
 
-  const matches = Array.from(classroomMarkers.values())
+  const matches = Array.from(roomMarkers.values())
     .filter(({ data }) =>
       data.room_number.toLowerCase().includes(q) ||
       (data.name || "").toLowerCase().includes(q) ||
@@ -340,7 +340,7 @@ function fitPadding() {
 }
 
 function startNavigation(id) {
-  const entry = classroomMarkers.get(id);
+  const entry = roomMarkers.get(id);
   if (!entry) return;
   const c = entry.data;
   if (destMarker) { destMarker.remove(); destMarker = null; }
@@ -489,7 +489,7 @@ toggleBtn.addEventListener("click", () => {
   else stopTracking();
 });
 
-// Popup button: add "Navigate here" to every classroom popup.
+// Popup button: add "Navigate here" to every room popup.
 initLegend();
 setTrackingUI(false);
 
@@ -498,5 +498,5 @@ map.on("load", async () => {
   await loadBoundary();
   await loadWalkways();
   initRouteLayers();
-  loadClassrooms();
+  loadRooms();
 });

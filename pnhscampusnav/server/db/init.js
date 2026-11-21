@@ -50,7 +50,7 @@ async function seedIfEmpty() {
   }
 
   // Approximate campus center — see README section on replacing this with
-  // real surveyed coordinates via the admin Classrooms tab.
+  // real surveyed coordinates via the admin Rooms tab.
   const CENTER_LAT = 11.1583;
   const CENTER_LNG = 124.9917;
 
@@ -100,7 +100,7 @@ async function seedIfEmpty() {
   const annexId = annexRes.insertId;
   const adminId = adminRes.insertId;
 
-  const classrooms = [
+  const rooms = [
     [mainId, "101", "Room 101", "1st Floor", CENTER_LAT + 0.0002, CENTER_LNG + 0.0002],
     [mainId, "102", "Room 102", "1st Floor", CENTER_LAT + 0.0002, CENTER_LNG + 0.0004],
     [mainId, "201", "Room 201", "2nd Floor", CENTER_LAT + 0.0004, CENTER_LNG + 0.0002],
@@ -110,7 +110,7 @@ async function seedIfEmpty() {
     [adminId, "ADM", "Principal's Office", "1st Floor", CENTER_LAT - 0.0001, CENTER_LNG - 0.0003],
     [adminId, "REG", "Registrar's Office", "1st Floor", CENTER_LAT + 0.0001, CENTER_LNG - 0.0003],
   ];
-  for (const row of classrooms) {
+  for (const row of rooms) {
     await pool.query(
       "INSERT INTO classrooms (building_id, room_number, name, floor, lat, lng) VALUES (?, ?, ?, ?, ?, ?)",
       row

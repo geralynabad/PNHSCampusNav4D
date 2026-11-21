@@ -186,9 +186,9 @@ async function loadBuildingShapes() {
   renderBuildingList();
 }
 
-// ---------- Classroom markers + search ----------
-const classroomMarkers = new Map();
-let allClassrooms = [];
+// ---------- Room markers + search ----------
+const roomMarkers = new Map();
+let allRooms = [];
 
 function formatFloor(floor) {
   const value = String(floor || "").trim();
@@ -202,19 +202,19 @@ function formatFloor(floor) {
   return `${number}${suffix} Floor`;
 }
 
-async function refreshClassrooms() {
+async function refreshRooms() {
   const data = await api("/api/classrooms");
-  allClassrooms = data.classrooms;
-  classroomMarkers.forEach(({ marker }) => marker.remove());
-  classroomMarkers.clear();
-  allClassrooms.forEach((c) => {
+  allRooms = data.classrooms;
+  roomMarkers.forEach(({ marker }) => marker.remove());
+  roomMarkers.clear();
+  allRooms.forEach((c) => {
     const el = makeEl("mk mk-room");
     const popup = new maplibregl.Popup({ offset: 14, closeButton: false }).setHTML(
       `<div class="popup-room">${escapeHtml(c.name || c.room_number)}</div>
        <div class="popup-building">${escapeHtml(c.building_name)} &middot; Room ${escapeHtml(c.room_number)}${c.floor ? " &middot; " + escapeHtml(c.floor) : ""}</div>`
     );
     const marker = new maplibregl.Marker({ element: el, anchor: "center" }).setLngLat([c.lng, c.lat]).setPopup(popup).addTo(map);
-    classroomMarkers.set(c.id, { marker, data: c });
+    roomMarkers.set(c.id, { marker, data: c });
   });
   renderRoomList();
 }
@@ -224,7 +224,7 @@ $("searchInput").addEventListener("input", () => {
   const list = $("searchResults");
   list.innerHTML = "";
   if (!q) return;
-  Array.from(classroomMarkers.values())
+  Array.from(roomMarkers.values())
     .filter(({ data }) =>
       data.room_number.toLowerCase().includes(q) ||
       (data.name || "").toLowerCase().includes(q) ||
@@ -304,7 +304,7 @@ socket.on("connect", () => socket.emit("authenticate", token));
 socket.on("active-users", renderActiveUsers);
 socket.on("auth-error", (msg) => { alert(msg); window.location.href = "/index.html"; });
 
-// ---------- CLASSROOMS: manage ----------
+// ---------- ROOMS: manage ----------
 let editingId = null;
 let pickMarker = null;
 let drawMode = null; // null | { kind: "building", id } | { kind: "boundary" } | { kind: "walkway" }
@@ -335,8 +335,8 @@ async function loadBuildings() {
 function resetRoomForm() {
   editingId = null;
   ["roomNumber", "roomFloor", "roomName", "roomLat", "roomLng"].forEach((id) => ($(id).value = ""));
-  $("roomFormTitle").textContent = "Add a classroom";
-  $("saveRoom").querySelector(".btn-label").textContent = "Save classroom";
+  $("roomFormTitle").textContent = "Add a room";
+  $("saveRoom").querySelector(".btn-label").textContent = "Save room";
   $("cancelEdit").classList.add("hidden-form");
   if (pickMarker) { pickMarker.remove(); pickMarker = null; }
 }
@@ -357,9 +357,9 @@ $("saveRoom").addEventListener("click", async () => {
   try {
     if (editingId) await api("/api/classrooms/" + editingId, "PUT", payload);
     else await api("/api/classrooms", "POST", payload);
-    flash($("formMsg"), editingId ? "Classroom updated." : "Classroom added.", true);
+    flash($("formMsg"), editingId ? "Room updated." : "Room added.", true);
     resetRoomForm();
-    await refreshClassrooms();
+    await refreshRooms();
   } catch (err) {
     flash($("formMsg"), err.message, false);
   }
@@ -380,10 +380,10 @@ $("addBuilding").addEventListener("click", async () => {
 });
 
 function renderRoomList() {
-  $("roomCount").textContent = allClassrooms.length;
+  $("roomCount").textContent = allRooms.length;
   const ul = $("roomList");
   ul.innerHTML = "";
-  allClassrooms.forEach((c) => {
+  allRooms.forEach((c) => {
     const li = document.createElement("li");
     li.innerHTML = `<div class="item-main"><div class="item-title">${escapeHtml(c.name || c.room_number)}</div>
       <div class="item-sub">${escapeHtml(c.building_name)} &middot; Room ${escapeHtml(c.room_number)}${c.floor ? ` &middot; ${escapeHtml(formatFloor(c.floor))}` : ""}</div></div>
@@ -396,8 +396,8 @@ function renderRoomList() {
       $("roomName").value = c.name || "";
       $("roomLat").value = c.lat;
       $("roomLng").value = c.lng;
-      $("roomFormTitle").textContent = "Edit classroom";
-      $("saveRoom").querySelector(".btn-label").textContent = "Update classroom";
+      $("roomFormTitle").textContent = "Edit room";
+      $("saveRoom").querySelector(".btn-label").textContent = "Update room";
       $("cancelEdit").classList.remove("hidden-form");
       map.flyTo({ center: [c.lng, c.lat], zoom: 19.3, duration: 600 });
       if (pickMarker) pickMarker.setLngLat([c.lng, c.lat]);
@@ -405,7 +405,7 @@ function renderRoomList() {
     });
     li.querySelector('[data-act="del"]').addEventListener("click", async () => {
       if (!confirm(`Delete ${c.name || c.room_number}?`)) return;
-      try { await api("/api/classrooms/" + c.id, "DELETE"); await refreshClassrooms(); }
+      try { await api("/api/classrooms/" + c.id, "DELETE"); await refreshRooms(); }
       catch (err) { flash($("formMsg"), err.message, false); }
     });
     ul.appendChild(li);
@@ -672,13 +672,13 @@ function renderBuildingList() {
       </div>`;
     li.querySelector('[data-act="draw"]').addEventListener("click", () => startDrawing(b.id, b.footprint, b.height_m));
     li.querySelector('[data-act="del"]').addEventListener("click", async () => {
-      if (!confirm(`Delete ${b.name}? This also deletes its classrooms.`)) return;
+      if (!confirm(`Delete ${b.name}? This also deletes its rooms.`)) return;
       try {
         await api("/api/classrooms/buildings/" + b.id, "DELETE");
         await loadBuildings();
         await loadBuildingList();
         await loadBuildingShapes();
-        await refreshClassrooms();
+        await refreshRooms();
       } catch (err) {
         flash($("formMsg"), err.message, false);
       }
@@ -807,5 +807,5 @@ map.on("load", async () => {
   await loadBuildingShapes();
   await loadBoundary(true);
   await loadWalkways();
-  refreshClassrooms();
+  refreshRooms();
 });
