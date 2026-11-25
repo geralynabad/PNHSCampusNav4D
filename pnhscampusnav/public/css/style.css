@@ -490,6 +490,40 @@ input, select { font-family: inherit; font-size: 0.95rem; }
 }
 .map-controls button:hover { background: var(--forest-50); }
 .map-controls-sep { width: 1px; height: 18px; background: var(--line); margin: 0 2px; }
+.map-compass {
+  position: absolute;
+  top: 66px;
+  right: 14px;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  width: 90px;
+  height: 90px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--paper-raised);
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+}
+.map-compass:hover { background: var(--forest-50); }
+.map-compass:focus-visible { outline: 3px solid var(--forest-600); outline-offset: 2px; }
+.map-compass-rose { display: block; width: 100%; height: 100%; overflow: visible; }
+.map-compass-north {
+  fill: var(--red);
+  font: 800 17px var(--font-ui);
+}
+.map-compass-north-point { fill: var(--red); }
+.map-compass-south-point { fill: #aab1a8; }
+.map-compass-center { fill: var(--paper-raised); stroke: var(--forest-800); stroke-width: 2; }
+@media (max-width: 760px) {
+  .map-compass {
+    top: 58px;
+    right: 8px;
+    width: 44px;
+    height: 44px;
+  }
+}
 
 /* Building-footprint drawing toolbar */
 .draw-toolbar {

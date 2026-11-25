@@ -80,6 +80,14 @@
         <div class="map-controls-sep"></div>
         <button id="resetView" title="Reset view">⟲</button>
       </div>
+      <button id="mapCompass" class="map-compass" type="button" aria-label="Reset map to north" title="Reset map to north">
+        <svg class="map-compass-rose" viewBox="0 0 100 100" aria-hidden="true">
+          <text class="map-compass-north" x="50" y="17" text-anchor="middle">N</text>
+          <path class="map-compass-north-point" d="M50 23 62 55 50 49 38 55Z" />
+          <path class="map-compass-south-point" d="M50 77 38 45 50 51 62 45Z" />
+          <circle class="map-compass-center" cx="50" cy="50" r="4" />
+        </svg>
+      </button>
       <div id="legend" class="map-legend">
         <button id="legendToggle" class="legend-toggle" aria-expanded="true">Legend <span>&#9662;</span></button>
         <ul class="legend-list">

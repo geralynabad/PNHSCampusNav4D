@@ -2,6 +2,7 @@ import * as maplibregl from "/vendor/maplibre/maplibre-gl.mjs";
 import { CAMPUS_CENTER, DEFAULT_VIEW, MAP_STYLE_URL } from "/js/campus-config.js";
 import { configBounds, applyBoundary, setMaskVisible } from "/js/campus-boundary.js";
 import { initLegend } from "/js/legend.js";
+import { attachCompassControl } from "/js/compass-control.js";
 
 const token = localStorage.getItem("pnhs_token");
 const userRaw = localStorage.getItem("pnhs_user");
@@ -63,6 +64,7 @@ const map = new maplibregl.Map({
   maxZoom: 20,
   attributionControl: { compact: true },
 });
+attachCompassControl(map);
 
 window.addEventListener("resize", () => {
   map.resize();
